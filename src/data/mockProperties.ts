@@ -33,9 +33,14 @@ export const PROPERTY_TYPES = [
 export const CITIES = [
   "Abidjan",
   "Bouaké",
+  "Divo",
   "Yamoussoukro",
   "San-Pédro",
   "Daloa",
+  "Lakota",
+  "Guitry",
+  "Hiré",
+  "Gagnoa",
   "Korhogo",
 ];
 
@@ -67,7 +72,7 @@ export const mockProperties: Property[] = [
     city: "Abidjan",
     commune: "Cocody",
     owner_name: "Kouassi Jean-Marc",
-    owner_phone: "+225 07 08 09 10 11",
+    owner_phone: "+225 07 79 53 57 95",
     images: [
       "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80",
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
@@ -91,7 +96,7 @@ export const mockProperties: Property[] = [
     city: "Abidjan",
     commune: "Plateau",
     owner_name: "Agence Prestige Immo",
-    owner_phone: "+225 01 02 03 04 05",
+    owner_phone: "+225 07 79 53 57 95",
     images: [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80",
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80",
@@ -114,10 +119,8 @@ export const mockProperties: Property[] = [
     city: "Abidjan",
     commune: "Bingerville",
     owner_name: "Diallo Ibrahim",
-    owner_phone: "+225 05 06 07 08 09",
-    images: [
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80",
-    ],
+    owner_phone: "+225 07 79 53 57 95",
+    images: ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80"],
     verified: false,
     created_at: "2026-03-08",
     views: 89,
@@ -136,10 +139,8 @@ export const mockProperties: Property[] = [
     city: "Abidjan",
     commune: "Marcory",
     owner_name: "Traoré Aminata",
-    owner_phone: "+225 07 11 22 33 44",
-    images: [
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80",
-    ],
+    owner_phone: "+225 07 79 53 57 95",
+    images: ["https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80"],
     verified: true,
     created_at: "2026-03-14",
     views: 67,
@@ -158,7 +159,7 @@ export const mockProperties: Property[] = [
     city: "Abidjan",
     commune: "Marcory",
     owner_name: "SCI Les Tours",
-    owner_phone: "+225 27 20 30 40 50",
+    owner_phone: "+225 07 79 53 57 95",
     images: [
       "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
       "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80",
@@ -181,7 +182,7 @@ export const mockProperties: Property[] = [
     city: "Abidjan",
     commune: "Yopougon",
     owner_name: "Koné Moussa",
-    owner_phone: "+225 05 55 66 77 88",
+    owner_phone: "+225 07 79 53 57 95",
     images: [
       "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80",
       "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80",
@@ -204,10 +205,8 @@ export const mockProperties: Property[] = [
     city: "Abidjan",
     commune: "Cocody",
     owner_name: "Groupe Habitat Plus",
-    owner_phone: "+225 27 22 44 55 66",
-    images: [
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
-    ],
+    owner_phone: "+225 07 79 53 57 95",
+    images: ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80"],
     verified: true,
     created_at: "2026-02-28",
     views: 445,
@@ -226,10 +225,8 @@ export const mockProperties: Property[] = [
     city: "Abidjan",
     commune: "Yopougon",
     owner_name: "SARL Logistics CI",
-    owner_phone: "+225 27 23 45 67 89",
-    images: [
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80",
-    ],
+    owner_phone: "+225 07 79 53 57 95",
+    images: ["https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80"],
     verified: true,
     created_at: "2026-03-13",
     views: 78,
