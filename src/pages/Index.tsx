@@ -52,12 +52,10 @@ export default function Index() {
             className="mx-auto max-w-2xl text-center"
           >
             <h1 className="font-display text-3xl leading-tight text-primary-foreground md:text-5xl">
-              Trouvez votre prochain{" "}
-              <span className="text-accent">chez-vous</span> en Côte d'Ivoire
+              Trouvez votre prochain <span className="text-accent">chez-vous</span> en Côte d'Ivoire
             </h1>
             <p className="mt-4 text-base leading-relaxed text-primary-foreground/70 md:text-lg">
-              Explorez des milliers d'annonces immobilières vérifiées à Abidjan et
-              dans toute la Côte d'Ivoire.
+              Explorez des milliers d'annonces immobilières vérifiées à Abidjan et dans toute la Côte d'Ivoire.
             </p>
           </motion.div>
 
@@ -95,12 +93,8 @@ export default function Index() {
       <section className="container py-16">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <h2 className="font-display text-2xl text-foreground md:text-3xl">
-              Annonces récentes
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Découvrez les derniers biens disponibles
-            </p>
+            <h2 className="font-display text-2xl text-foreground md:text-3xl">Annonces récentes</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Découvrez les derniers biens disponibles</p>
           </div>
           <Link
             to="/annonces"
@@ -136,9 +130,7 @@ export default function Index() {
       {/* Features */}
       <section className="bg-secondary py-16">
         <div className="container">
-          <h2 className="font-display text-center text-2xl text-foreground md:text-3xl">
-            Pourquoi IvoireImmo ?
-          </h2>
+          <h2 className="font-display text-center text-2xl text-foreground md:text-3xl">Pourquoi IvoireAgence ?</h2>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {features.map((f, i) => (
               <motion.div
@@ -165,12 +157,9 @@ export default function Index() {
       {/* CTA */}
       <section className="container py-16 text-center">
         <div className="mx-auto max-w-xl rounded-2xl bg-primary p-8 md:p-12" style={{ boxShadow: "var(--shadow-lg)" }}>
-          <h2 className="font-display text-2xl text-primary-foreground md:text-3xl">
-            Vous avez un bien à proposer ?
-          </h2>
+          <h2 className="font-display text-2xl text-primary-foreground md:text-3xl">Vous avez un bien à proposer ?</h2>
           <p className="mt-3 text-sm leading-relaxed text-primary-foreground/70">
-            Publiez votre annonce gratuitement et touchez des milliers de clients
-            potentiels.
+            Publiez votre annonce gratuitement et touchez des milliers de clients potentiels.
           </p>
           <Link
             to="/publier"
