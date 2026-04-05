@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Search, PlusCircle, User, Menu, X } from "lucide-react";
+import { Home, Search, PlusCircle, User, Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { to: "/", label: "Accueil", icon: Home },
@@ -12,6 +13,9 @@ const navLinks = [
 export default function Navbar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, profile, loading } = useAuth();
+
+  const displayName = profile?.first_name || user?.email?.split("@")[0] || "";
 
   return (
     <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md" style={{ boxShadow: "var(--shadow-sm)" }}>
@@ -47,13 +51,25 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link
-            to="/connexion"
-            className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-          >
-            <User className="h-4 w-4" />
-            Connexion
-          </Link>
+          {!loading && user ? (
+            <Link
+              to="/profil"
+              className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-light">
+                <User className="h-4 w-4 text-primary" />
+              </div>
+              {displayName}
+            </Link>
+          ) : (
+            <Link
+              to="/connexion"
+              className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              <User className="h-4 w-4" />
+              Connexion
+            </Link>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -93,14 +109,25 @@ export default function Navbar() {
                   </Link>
                 );
               })}
-              <Link
-                to="/connexion"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary"
-              >
-                <User className="h-5 w-5" />
-                Connexion
-              </Link>
+              {!loading && user ? (
+                <Link
+                  to="/profil"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary"
+                >
+                  <User className="h-5 w-5" />
+                  Mon profil
+                </Link>
+              ) : (
+                <Link
+                  to="/connexion"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary"
+                >
+                  <User className="h-5 w-5" />
+                  Connexion
+                </Link>
+              )}
             </nav>
           </motion.div>
         )}
