@@ -21,7 +21,7 @@ export default function Navbar() {
             <Home className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="font-display text-xl text-foreground">
-            Ivoire<span className="text-accent">Immo</span>
+            Ivoire<span className="text-accent">Immobilier</span>
           </span>
         </Link>
 
@@ -85,9 +85,7 @@ export default function Navbar() {
                     to={link.to}
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
-                      active
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-secondary"
+                      active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
                     }`}
                   >
                     <link.icon className="h-5 w-5" />
