@@ -232,7 +232,7 @@ export const mockProperties: Property[] = [
     views: 78,
   },
   {
-    id: "9",
+    id: "10",
     title: "2 terrains jumelés 1000m² avec ferme + maison",
     description:
       "Ensemble de 2 terrains jumelés de 500m² chacun (1000m² au total). Le premier terrain comprend une ferme moderne pouvant accueillir jusqu’à 2000 poulets ainsi qu’une maison déjà construite de type chambre-salon. Le second terrain est vierge, idéal pour extension, construction ou projet agricole. Opportunité parfaite pour investissement agro-immobilier.",
@@ -246,9 +246,30 @@ export const mockProperties: Property[] = [
     commune: "Divo",
     owner_name: "Gbagnon Denis",
     owner_phone: "+225 79 53 57 95",
-    images: ["/images/img01.jpg", "/images/img2.jpg"],
+    images: ["/images/img01.jpg", "/images/img2.jpg", "/images/img3.jpg"],
     verified: false,
     created_at: "2026-04-04",
+    views: 0,
+  },
+
+  {
+    id: "11",
+    title: "Maison 2 pièces à louer",
+    description:
+      "Charmante maison de 2 pièces (chambre + salon) située dans un quartier calme et accessible de Divo. Le logement dispose de WC et douche internes pour plus de confort. Idéal pour célibataire ou jeune couple recherchant tranquillité et sécurité.",
+    property_type: "maison",
+    status: "À Louer",
+    price: 40000,
+    surface: null,
+    rooms: 2,
+    address: "À préciser",
+    city: "Divo",
+    commune: "Divo",
+    owner_name: "Mme Teha",
+    owner_phone: "+225 79 53 57 95",
+    images: ["/images/img04.jpg", "/images/img5.jpg", "/images/img6.jpg"],
+    verified: true,
+    created_at: "2026-04-06",
     views: 0,
   },
 ];
