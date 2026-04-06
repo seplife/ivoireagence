@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Search, PlusCircle, User, Menu, X, LogOut } from "lucide-react";
+import { Home, Search, PlusCircle, User, Menu, X, LogOut, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,6 +8,7 @@ const navLinks = [
   { to: "/", label: "Accueil", icon: Home },
   { to: "/annonces", label: "Annonces", icon: Search },
   { to: "/publier", label: "Publier", icon: PlusCircle },
+  { to: "/messages", label: "Messages", icon: MessageCircle },
 ];
 
 export default function Navbar() {

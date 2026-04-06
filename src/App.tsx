@@ -10,6 +10,7 @@ import PropertyDetail from "./pages/PropertyDetail";
 import PublishListing from "./pages/PublishListing";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/publier" element={<PublishListing />} />
             <Route path="/connexion" element={<Login />} />
             <Route path="/profil" element={<Profile />} />
+            <Route path="/messages" element={<Messages />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
