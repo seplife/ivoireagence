@@ -1,15 +1,22 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin, Maximize, BedDouble, CheckCircle, Phone, MessageCircle, Calendar, Eye, Building2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { mockProperties, formatPrice } from "@/data/mockProperties";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function PropertyDetail() {
   const { id } = useParams();
   const property = mockProperties.find((p) => p.id === id);
   const [activeImage, setActiveImage] = useState(0);
+  const [contactMessage, setContactMessage] = useState("");
+  const [sendingMsg, setSendingMsg] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   if (!property) {
     return (
@@ -157,33 +164,74 @@ export default function PropertyDetail() {
                 </a>
               </div>
 
-              {/* Contact form */}
+              {/* Contact form – sends via database */}
               <div className="mt-6 border-t border-border pt-6">
                 <h4 className="text-sm font-medium text-foreground">Envoyer un message</h4>
-                <form className="mt-3 space-y-3" onSubmit={(e) => e.preventDefault()}>
-                  <input
-                    type="text"
-                    placeholder="Votre nom"
-                    className="h-11 w-full rounded-xl bg-secondary px-3 text-sm outline-none transition-all focus:ring-2 focus:ring-accent/20"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Votre téléphone"
-                    className="h-11 w-full rounded-xl bg-secondary px-3 text-sm outline-none transition-all focus:ring-2 focus:ring-accent/20"
-                  />
-                  <textarea
-                    placeholder="Votre message..."
-                    rows={3}
-                    className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-accent/20"
-                    defaultValue={`Bonjour, je suis intéressé(e) par "${property.title}". Merci de me contacter.`}
-                  />
-                  <button
-                    type="submit"
-                    className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
+                {user ? (
+                  <form
+                    className="mt-3 space-y-3"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!contactMessage.trim() || sendingMsg) return;
+                      // For mock data we don't have a real owner_id, so we skip
+                      // In production, property would have owner_id from DB
+                      setSendingMsg(true);
+                      // Try to find owner by phone in profiles
+                      const { data: ownerProfile } = await supabase
+                        .from("profiles")
+                        .select("user_id")
+                        .eq("phone", property.owner_phone)
+                        .maybeSingle();
+
+                      if (!ownerProfile) {
+                        toast.error("Impossible de trouver le propriétaire. Utilisez le téléphone ou WhatsApp.");
+                        setSendingMsg(false);
+                        return;
+                      }
+
+                      const { error } = await supabase.from("messages").insert({
+                        sender_id: user.id,
+                        receiver_id: ownerProfile.user_id,
+                        message: contactMessage.trim(),
+                        property_id: null, // mock data uses string IDs
+                      });
+
+                      if (error) {
+                        toast.error("Erreur lors de l'envoi du message");
+                      } else {
+                        toast.success("Message envoyé !");
+                        setContactMessage("");
+                        navigate(`/messages?contact=${ownerProfile.user_id}`);
+                      }
+                      setSendingMsg(false);
+                    }}
                   >
-                    Envoyer
-                  </button>
-                </form>
+                    <textarea
+                      placeholder="Votre message..."
+                      rows={3}
+                      value={contactMessage}
+                      onChange={(e) => setContactMessage(e.target.value)}
+                      className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-accent/20"
+                    />
+                    <button
+                      type="submit"
+                      disabled={sendingMsg || !contactMessage.trim()}
+                      className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96] disabled:opacity-50"
+                    >
+                      {sendingMsg ? "Envoi..." : "Envoyer"}
+                    </button>
+                  </form>
+                ) : (
+                  <div className="mt-3 text-center">
+                    <p className="text-sm text-muted-foreground">Connectez-vous pour envoyer un message</p>
+                    <Link
+                      to="/connexion"
+                      className="mt-2 inline-block rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground"
+                    >
+                      Se connecter
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>
