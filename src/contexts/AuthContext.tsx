@@ -10,13 +10,28 @@ interface Profile {
   phone: string | null;
   avatar_url: string | null;
   user_type: "client" | "agent";
+  plan: "free" | "pro" | "agency";
+  plan_expires_at: string | null;
+}
+
+interface Subscription {
+  id: string;
+  plan: "free" | "pro" | "agency";
+  billing_cycle: "monthly" | "yearly";
+  status: "trialing" | "active" | "past_due" | "cancelled" | "expired";
+  current_period_end: string;
+  cancel_at_period_end: boolean;
+  featured_used_this_month: number;
 }
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
+  subscription: Subscription | null;
   loading: boolean;
+  isPro: boolean;
+  isAgency: boolean;
   signUp: (email: string, password: string, metadata?: Record<string, string>) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -29,19 +44,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-    setProfile(data as Profile | null);
+    const [{ data: profileData }, { data: subData }] = await Promise.all([
+      supabase.from("profiles").select("*").eq("user_id", userId).single(),
+      supabase.from("subscriptions").select("*").eq("user_id", userId).single(),
+    ]);
+    setProfile(profileData as Profile | null);
+    setSubscription(subData as Subscription | null);
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
@@ -49,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setTimeout(() => fetchProfile(session.user.id), 0);
         } else {
           setProfile(null);
+          setSubscription(null);
         }
         setLoading(false);
       }
@@ -57,23 +74,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
+      if (session?.user) fetchProfile(session.user.id);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => authSub.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, metadata?: Record<string, string>) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: metadata,
-        emailRedirectTo: window.location.origin,
-      },
+      options: { data: metadata, emailRedirectTo: window.location.origin },
     });
     return { error: error as Error | null };
   };
@@ -88,14 +100,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     setProfile(null);
+    setSubscription(null);
   };
 
   const refreshProfile = async () => {
     if (user) await fetchProfile(user.id);
   };
 
+  const isPro = profile?.plan === "pro" || profile?.plan === "agency";
+  const isAgency = profile?.plan === "agency";
+
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, signUp, signIn, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{
+      user, session, profile, subscription, loading,
+      isPro, isAgency,
+      signUp, signIn, signOut, refreshProfile,
+    }}>
       {children}
     </AuthContext.Provider>
   );
