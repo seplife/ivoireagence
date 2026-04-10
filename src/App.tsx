@@ -12,9 +12,9 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
-import PaymentPage        from "@/pages/PaymentPage";
-import PricingPage        from "@/pages/PricingPage";
-import MesFactures        from "@/pages/MesFactures";
+import PaymentPage from "@/pages/PaymentPage";
+import PricingPage from "@/pages/PricingPage";
+import MesFactures from "@/pages/MesFactures";
 import SubscriptionConfirm from "@/pages/SubscriptionConfirm";
 
 const queryClient = new QueryClient();
