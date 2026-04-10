@@ -12,7 +12,7 @@ export default function Footer() {
                 <Home className="h-4 w-4" />
               </div>
               <span className="font-display text-lg">
-                Ivoire<span className="text-accent">Immo</span>
+                Ivoire<span className="text-accent">Immobilier</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-primary-foreground/70">
