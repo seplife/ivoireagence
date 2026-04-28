@@ -26,7 +26,7 @@ const TYPE_MAP: Record<string, string> = {
 };
 
 export default function PublishListing() {
-  const { user, profile, isPro, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -88,7 +88,7 @@ export default function PublishListing() {
     setSubmitting(true);
 
     try {
-      // 1. Créer la propriété en statut pending_payment
+      // 1. Créer la propriété
       const { data: property, error: propError } = await supabase
         .from("properties")
         .insert({
@@ -96,7 +96,6 @@ export default function PublishListing() {
           description: form.description.trim() || null,
           property_type: form.property_type as any,
           status: form.status as any,
-          publication_status: "pending_payment",
           price: Number(form.price),
           surface: form.surface ? Number(form.surface) : null,
           rooms: form.rooms ? Number(form.rooms) : null,
@@ -134,42 +133,8 @@ export default function PublishListing() {
         );
       }
 
-      // 3a. Plan Pro/Agency → annonce active directement, pas de paiement one-shot
-      if (isPro) {
-        await supabase
-          .from("properties")
-          .update({ publication_status: "active" })
-          .eq("id", property.id);
-        toast.success("Annonce publiée ! Elle est maintenant visible.");
-        navigate(`/annonce/${property.id}`);
-        return;
-      }
-
-      // 3b. Plan Free → écouter la création de la facture par le billing-handler Edge Function
-      setStep("waiting_invoice");
-      const channel = supabase
-        .channel(`invoice-for-${property.id}`)
-        .on("postgres_changes", {
-          event: "INSERT",
-          schema: "public",
-          table: "invoices",
-          filter: `property_id=eq.${property.id}`,
-        }, (payload) => {
-          supabase.removeChannel(channel);
-          navigate(`/paiement/${payload.new.id}`);
-        })
-        .subscribe();
-
-      // Timeout de sécurité : si le billing-handler ne répond pas en 8s
-      setTimeout(() => {
-        supabase.removeChannel(channel);
-        if (step === "waiting_invoice") {
-          toast.error("Impossible de créer la facture automatiquement. Contactez le support.");
-          setSubmitting(false);
-          setStep("form");
-        }
-      }, 8000);
-
+      toast.success("Annonce publiée !");
+      navigate(`/annonce/${property.id}`);
     } catch (err: any) {
       toast.error(err.message || "Une erreur est survenue");
       setSubmitting(false);
