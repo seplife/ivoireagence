@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Building2, Shield, Zap, Loader2 } from "lucide-react";
+import { ArrowRight, Building2, Shield, Zap, Loader2, MessageCircle, ShieldCheck, BadgeCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -90,13 +90,19 @@ export default function Index() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            className="mx-auto max-w-2xl text-center"
+            className="mx-auto max-w-3xl text-center"
           >
+            <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-3 py-1.5 text-xs font-medium text-primary-foreground/90 backdrop-blur">
+              <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+              Biens vérifiés • Zéro arnaque
+            </div>
+
             <h1 className="font-display text-3xl leading-tight text-primary-foreground md:text-5xl">
-              Trouvez votre prochain <span className="text-accent">chez-vous</span> en Côte d'Ivoire
+              Trouvez votre prochain <span className="text-accent">chez-vous</span>{" "}
+              en Côte d'Ivoire
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-primary-foreground/70 md:text-lg">
-              Explorez des milliers d'annonces immobilières vérifiées à Abidjan et dans toute la Côte d'Ivoire.
+            <p className="mt-4 text-base leading-relaxed text-primary-foreground/75 md:text-lg">
+              Annonces vérifiées, accompagnement complet, mise en relation directe avec des propriétaires de confiance.
             </p>
           </motion.div>
 
@@ -109,10 +115,52 @@ export default function Index() {
             <SearchBar variant="hero" />
           </motion.div>
 
+          {/* Doubles CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mx-auto mt-6 flex max-w-xl flex-col items-center justify-center gap-3 sm:flex-row"
+          >
+            <Link
+              to="/annonces"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96] sm:w-auto"
+            >
+              Voir les annonces <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href="https://wa.me/2250779535795?text=Bonjour%2C%20je%20viens%20de%20IvoireImmobilier%20et%20j%27aimerais%20parler%20%C3%A0%20un%20expert."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-foreground/10 px-5 py-3 text-sm font-semibold text-primary-foreground backdrop-blur transition-all duration-150 hover:bg-primary-foreground/20 sm:w-auto"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Parler à un expert
+            </a>
+          </motion.div>
+
+          {/* Réassurance */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
+            className="mx-auto mt-8 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-primary-foreground/70"
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <BadgeCheck className="h-3.5 w-3.5 text-accent" /> Annonces vérifiées
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Shield className="h-3.5 w-3.5 text-accent" /> Accompagnement complet
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <MessageCircle className="h-3.5 w-3.5 text-accent" /> Réponse WhatsApp rapide
+            </span>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
             className="mx-auto mt-10 flex max-w-lg justify-center gap-8 text-center md:gap-12"
           >
             {[
