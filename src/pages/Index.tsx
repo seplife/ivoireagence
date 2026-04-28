@@ -40,22 +40,22 @@ export default function Index() {
   const [stats, setStats] = useState({ listings: "…", users: "…", communes: "…" });
 
   useEffect(() => {
-    // Annonces récentes actives uniquement
+    // Annonces récentes
     supabase
       .from("properties")
       .select(`
-        id, title, property_type, status, publication_status,
-        price, surface, rooms, city, commune,
-        owner_name, owner_phone, is_verified, is_featured, views_count,
+        id, title, property_type, status,
+        price, surface, rooms, address, city, commune,
+        owner_name, owner_phone, is_verified, views_count,
         created_at,
         property_images ( image_url )
       `)
-      .eq("publication_status", "active")
       .order("created_at", { ascending: false })
       .limit(4)
       .then(({ data }) => {
-        const normalized = (data || []).map((p) => ({
+        const normalized = (data || []).map((p: any) => ({
           ...p,
+          status: p.status === "a_louer" ? "À Louer" : "À Vendre",
           images: p.property_images?.map((img: any) => img.image_url) ?? [],
           verified: p.is_verified,
           views: p.views_count,
@@ -65,9 +65,9 @@ export default function Index() {
 
     // Compteurs hero
     Promise.all([
-      supabase.from("properties").select("id", { count: "exact", head: true }).eq("publication_status", "active"),
+      supabase.from("properties").select("id", { count: "exact", head: true }),
       supabase.from("profiles").select("id", { count: "exact", head: true }),
-      supabase.from("properties").select("commune").eq("publication_status", "active").not("commune", "is", null),
+      supabase.from("properties").select("commune").not("commune", "is", null),
     ]).then(([{ count: listingCount }, { count: userCount }, { data: communeData }]) => {
       const uniqueCommunes = new Set((communeData || []).map((p: any) => p.commune)).size;
       setStats({

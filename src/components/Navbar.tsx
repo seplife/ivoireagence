@@ -14,7 +14,8 @@ const navLinks = [
 export default function Navbar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, profile, loading, isPro } = useAuth();
+  const { user, profile, loading } = useAuth();
+  const isPro = false;
 
   const displayName = profile?.first_name || user?.email?.split("@")[0] || "";
 
@@ -73,9 +74,9 @@ export default function Navbar() {
                     <User className="h-4 w-4 text-primary" />
                   </div>
                   <span>{displayName}</span>
-                  {isPro && (
+                  {profile?.user_type === "agent" && (
                     <span className="rounded-md bg-primary px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">
-                      {profile?.plan}
+                      Agent
                     </span>
                   )}
                 </button>

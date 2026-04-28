@@ -28,19 +28,17 @@ export default function Listings() {
     let query = supabase
       .from("properties")
       .select(`
-        id, title, description, property_type, status, publication_status,
+        id, title, description, property_type, status,
         price, surface, rooms, address, city, commune,
-        owner_name, owner_phone, is_verified, is_featured, views_count,
+        owner_name, owner_phone, is_verified, views_count,
         created_at,
         property_images ( image_url )
-      `)
-      // Seules les annonces actives sont visibles publiquement
-      .eq("publication_status", "active");
+      `);
 
     if (city)    query = query.eq("city", city);
     if (commune) query = query.eq("commune", commune);
-    if (type)    query = query.eq("property_type", type);
-    if (status)  query = query.eq("status", status);
+    if (type)    query = query.eq("property_type", type as any);
+    if (status)  query = query.eq("status", status as any);
 
     if (sortBy === "price-asc")  query = query.order("price", { ascending: true });
     else if (sortBy === "price-desc") query = query.order("price", { ascending: false });
@@ -49,9 +47,10 @@ export default function Listings() {
     const { data, error } = await query;
     if (error) console.error("Listings fetch error:", error);
 
-    // Normaliser la structure des images
-    const normalized = (data || []).map((p) => ({
+    // Normaliser la structure des images et le statut
+    const normalized = (data || []).map((p: any) => ({
       ...p,
+      status: p.status === "a_louer" ? "À Louer" : "À Vendre",
       images: p.property_images?.map((img: any) => img.image_url) ?? [],
       verified: p.is_verified,
       views: p.views_count,

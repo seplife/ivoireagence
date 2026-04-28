@@ -1,22 +1,66 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Maximize, BedDouble, CheckCircle, Phone, MessageCircle, Calendar, Eye, Building2 } from "lucide-react";
+import { ArrowLeft, MapPin, Maximize, BedDouble, CheckCircle, Phone, MessageCircle, Calendar, Eye, Building2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { mockProperties, formatPrice } from "@/data/mockProperties";
+import { formatPrice } from "@/data/mockProperties";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function PropertyDetail() {
   const { id } = useParams();
-  const property = mockProperties.find((p) => p.id === id);
+  const [property, setProperty] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const [contactMessage, setContactMessage] = useState("");
   const [sendingMsg, setSendingMsg] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    supabase
+      .from("properties")
+      .select(`
+        id, title, description, property_type, status,
+        price, surface, rooms, address, city, commune,
+        owner_id, owner_name, owner_phone, is_verified, views_count,
+        created_at,
+        property_images ( image_url )
+      `)
+      .eq("id", id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          const normalized = {
+            ...data,
+            status: data.status === "a_louer" ? "À Louer" : "À Vendre",
+            images: (data as any).property_images?.map((img: any) => img.image_url) ?? [],
+            verified: data.is_verified,
+            views: data.views_count,
+          };
+          setProperty(normalized);
+          // Increment views count (best-effort)
+          supabase.from("properties").update({ views_count: (data.views_count || 0) + 1 }).eq("id", id).then(() => {});
+        }
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="flex items-center justify-center py-32">
+          <Loader2 className="h-7 w-7 animate-spin text-muted-foreground" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -34,6 +78,8 @@ export default function PropertyDetail() {
   }
 
   const isRent = property.status === "À Louer";
+  const phone = property.owner_phone || "";
+  const images: string[] = property.images.length > 0 ? property.images : ["/placeholder.svg"];
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,20 +91,14 @@ export default function PropertyDetail() {
         </Link>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left: images + details */}
           <div className="lg:col-span-2">
-            {/* Main image */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="relative aspect-[16/10] overflow-hidden rounded-2xl"
               style={{ boxShadow: "var(--shadow-md)" }}
             >
-              <img
-                src={property.images[activeImage]}
-                alt={property.title}
-                className="h-full w-full object-cover"
-              />
+              <img src={images[activeImage]} alt={property.title} className="h-full w-full object-cover" />
               <div
                 className={`absolute left-4 top-4 rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur ${
                   isRent ? "bg-primary/90 text-primary-foreground" : "bg-accent/90 text-accent-foreground"
@@ -73,10 +113,9 @@ export default function PropertyDetail() {
               )}
             </motion.div>
 
-            {/* Thumbnails */}
-            {property.images.length > 1 && (
+            {images.length > 1 && (
               <div className="mt-3 flex gap-2 overflow-x-auto">
-                {property.images.map((img, i) => (
+                {images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
@@ -90,13 +129,12 @@ export default function PropertyDetail() {
               </div>
             )}
 
-            {/* Details */}
             <div className="mt-6 rounded-2xl bg-card p-6" style={{ boxShadow: "var(--shadow-sm)" }}>
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <h1 className="font-display text-2xl text-foreground">{property.title}</h1>
                   <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" /> {property.address}, {property.commune}, {property.city}
+                    <MapPin className="h-4 w-4" /> {[property.address, property.commune, property.city].filter(Boolean).join(", ")}
                   </p>
                 </div>
                 <div className="text-right">
@@ -106,13 +144,12 @@ export default function PropertyDetail() {
                 </div>
               </div>
 
-              {/* Specs */}
               <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {[
                   { icon: Building2, label: "Type", value: property.property_type },
-                  { icon: Maximize, label: "Superficie", value: `${property.surface}m²` },
+                  { icon: Maximize, label: "Superficie", value: property.surface ? `${property.surface}m²` : "—" },
                   { icon: BedDouble, label: "Pièces", value: property.rooms > 0 ? `${property.rooms}` : "—" },
-                  { icon: Eye, label: "Vues", value: `${property.views}` },
+                  { icon: Eye, label: "Vues", value: `${property.views || 0}` },
                 ].map((spec) => (
                   <div key={spec.label} className="rounded-xl bg-secondary p-3 text-center">
                     <spec.icon className="mx-auto h-5 w-5 text-muted-foreground" />
@@ -122,11 +159,12 @@ export default function PropertyDetail() {
                 ))}
               </div>
 
-              {/* Description */}
-              <div className="mt-6">
-                <h2 className="font-display text-lg text-foreground">Description</h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{property.description}</p>
-              </div>
+              {property.description && (
+                <div className="mt-6">
+                  <h2 className="font-display text-lg text-foreground">Description</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{property.description}</p>
+                </div>
+              )}
 
               <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
                 <Calendar className="h-3.5 w-3.5" />
@@ -135,92 +173,82 @@ export default function PropertyDetail() {
             </div>
           </div>
 
-          {/* Right: Contact sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-20 rounded-2xl bg-card p-6" style={{ boxShadow: "var(--shadow-md)" }}>
               <h3 className="font-display text-lg text-foreground">Contacter le propriétaire</h3>
 
               <div className="mt-4 rounded-xl bg-secondary p-4">
-                <p className="font-semibold text-foreground">{property.owner_name}</p>
-                <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-                  <Phone className="h-3.5 w-3.5" /> {property.owner_phone}
-                </p>
+                <p className="font-semibold text-foreground">{property.owner_name || "Propriétaire"}</p>
+                {phone && (
+                  <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
+                    <Phone className="h-3.5 w-3.5" /> {phone}
+                  </p>
+                )}
               </div>
 
-              <div className="mt-4 space-y-3">
-                <a
-                  href={`tel:${property.owner_phone.replace(/\s/g, "")}`}
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
-                >
-                  <Phone className="h-4 w-4" /> Appeler
-                </a>
-                <a
-                  href={`https://wa.me/${property.owner_phone.replace(/[\s+]/g, "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-accent text-sm font-semibold text-accent-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
-                >
-                  <MessageCircle className="h-4 w-4" /> WhatsApp
-                </a>
-              </div>
+              {phone && (
+                <div className="mt-4 space-y-3">
+                  <a
+                    href={`tel:${phone.replace(/\s/g, "")}`}
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
+                  >
+                    <Phone className="h-4 w-4" /> Appeler
+                  </a>
+                  <a
+                    href={`https://wa.me/${phone.replace(/[\s+]/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-accent text-sm font-semibold text-accent-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
+                  >
+                    <MessageCircle className="h-4 w-4" /> WhatsApp
+                  </a>
+                </div>
+              )}
 
-              {/* Contact form – sends via database */}
               <div className="mt-6 border-t border-border pt-6">
                 <h4 className="text-sm font-medium text-foreground">Envoyer un message</h4>
                 {user ? (
-                  <form
-                    className="mt-3 space-y-3"
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      if (!contactMessage.trim() || sendingMsg) return;
-                      // For mock data we don't have a real owner_id, so we skip
-                      // In production, property would have owner_id from DB
-                      setSendingMsg(true);
-                      // Try to find owner by phone in profiles
-                      const { data: ownerProfile } = await supabase
-                        .from("profiles")
-                        .select("user_id")
-                        .eq("phone", property.owner_phone)
-                        .maybeSingle();
-
-                      if (!ownerProfile) {
-                        toast.error("Impossible de trouver le propriétaire. Utilisez le téléphone ou WhatsApp.");
+                  user.id === property.owner_id ? (
+                    <p className="mt-3 text-sm text-muted-foreground">Ceci est votre annonce.</p>
+                  ) : (
+                    <form
+                      className="mt-3 space-y-3"
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (!contactMessage.trim() || sendingMsg) return;
+                        setSendingMsg(true);
+                        const { error } = await supabase.from("messages").insert({
+                          sender_id: user.id,
+                          receiver_id: property.owner_id,
+                          message: contactMessage.trim(),
+                          property_id: property.id,
+                        });
+                        if (error) {
+                          toast.error("Erreur lors de l'envoi du message");
+                        } else {
+                          toast.success("Message envoyé !");
+                          setContactMessage("");
+                          navigate(`/messages?contact=${property.owner_id}`);
+                        }
                         setSendingMsg(false);
-                        return;
-                      }
-
-                      const { error } = await supabase.from("messages").insert({
-                        sender_id: user.id,
-                        receiver_id: ownerProfile.user_id,
-                        message: contactMessage.trim(),
-                        property_id: null, // mock data uses string IDs
-                      });
-
-                      if (error) {
-                        toast.error("Erreur lors de l'envoi du message");
-                      } else {
-                        toast.success("Message envoyé !");
-                        setContactMessage("");
-                        navigate(`/messages?contact=${ownerProfile.user_id}`);
-                      }
-                      setSendingMsg(false);
-                    }}
-                  >
-                    <textarea
-                      placeholder="Votre message..."
-                      rows={3}
-                      value={contactMessage}
-                      onChange={(e) => setContactMessage(e.target.value)}
-                      className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-accent/20"
-                    />
-                    <button
-                      type="submit"
-                      disabled={sendingMsg || !contactMessage.trim()}
-                      className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96] disabled:opacity-50"
+                      }}
                     >
-                      {sendingMsg ? "Envoi..." : "Envoyer"}
-                    </button>
-                  </form>
+                      <textarea
+                        placeholder="Votre message..."
+                        rows={3}
+                        value={contactMessage}
+                        onChange={(e) => setContactMessage(e.target.value)}
+                        className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-accent/20"
+                      />
+                      <button
+                        type="submit"
+                        disabled={sendingMsg || !contactMessage.trim()}
+                        className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-150 hover:brightness-110 active:scale-[0.96] disabled:opacity-50"
+                      >
+                        {sendingMsg ? "Envoi..." : "Envoyer"}
+                      </button>
+                    </form>
+                  )
                 ) : (
                   <div className="mt-3 text-center">
                     <p className="text-sm text-muted-foreground">Connectez-vous pour envoyer un message</p>
