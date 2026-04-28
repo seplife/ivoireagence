@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CITIES, PROPERTY_TYPES } from "@/data/mockProperties";
@@ -6,6 +6,8 @@ import { CITIES, PROPERTY_TYPES } from "@/data/mockProperties";
 interface SearchBarProps {
   variant?: "hero" | "compact";
 }
+
+const WHATSAPP_NUMBER = "2250779535795";
 
 export default function SearchBar({ variant = "hero" }: SearchBarProps) {
   const navigate = useNavigate();
@@ -19,6 +21,21 @@ export default function SearchBar({ variant = "hero" }: SearchBarProps) {
     if (type) params.set("type", type);
     if (status) params.set("status", status);
     navigate(`/annonces?${params.toString()}`);
+  };
+
+  // Construit un message WhatsApp pré-rempli avec les filtres choisis
+  const buildWhatsappHref = () => {
+    const statusLabel =
+      status === "a_louer" ? "à louer" : status === "a_vendre" ? "à vendre" : "";
+    const parts: string[] = [];
+    parts.push("Bonjour, je cherche un bien sur IvoireImmobilier");
+    if (type && statusLabel) parts.push(`: un(e) ${type} ${statusLabel}`);
+    else if (type) parts.push(`: un(e) ${type}`);
+    else if (statusLabel) parts.push(` ${statusLabel}`);
+    if (city) parts.push(` à ${city}`);
+    parts.push(". Pouvez-vous m'aider ?");
+    const message = parts.join("");
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   };
 
   const isHero = variant === "hero";
@@ -69,6 +86,17 @@ export default function SearchBar({ variant = "hero" }: SearchBarProps) {
           Rechercher
         </button>
       </div>
+
+      {/* CTA WhatsApp pré-rempli avec les filtres */}
+      <a
+        href={buildWhatsappHref()}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366]/10 px-4 text-sm font-medium text-[#128C4F] transition-colors hover:bg-[#25D366]/20"
+      >
+        <MessageCircle className="h-4 w-4" />
+        Envoyer ma recherche par WhatsApp
+      </a>
     </div>
   );
 }
