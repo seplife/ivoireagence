@@ -231,6 +231,17 @@ export default function VerificationProcess() {
                 <div className="text-sm leading-relaxed text-muted-foreground">
                   {s.body}
                 </div>
+
+                {/* CTA WhatsApp contextuel */}
+                <a
+                  href={buildWaHref(s.waMessage)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  {s.cta}
+                </a>
               </section>
             ))}
 
