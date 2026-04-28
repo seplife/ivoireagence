@@ -13,11 +13,16 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+const WHATSAPP_NUMBER = "2250779535795";
+
 const sections = [
   {
     id: "verification",
     icon: BadgeCheck,
     title: "Comment vérifions-nous les annonces ?",
+    cta: "Demander la vérification d'une annonce",
+    waMessage:
+      "Bonjour, j'ai vu une annonce sur IvoireImmobilier et je voudrais savoir si elle a bien été vérifiée par votre équipe. Pouvez-vous m'aider ?",
     body: (
       <>
         <p>
@@ -45,6 +50,9 @@ const sections = [
     id: "paiement",
     icon: AlertTriangle,
     title: "Dois-je payer avant de visiter un bien ?",
+    cta: "Vérifier avant de payer",
+    waMessage:
+      "Bonjour, on me demande de payer (frais de dossier / caution / réservation) avant la visite d'un bien sur IvoireImmobilier. Est-ce normal ? Pouvez-vous vérifier l'annonce ?",
     body: (
       <>
         <p>
@@ -67,6 +75,9 @@ const sections = [
     id: "fraude",
     icon: AlertTriangle,
     title: "Comment reconnaître une annonce frauduleuse ?",
+    cta: "Faire vérifier une annonce suspecte",
+    waMessage:
+      "Bonjour, je suspecte qu'une annonce vue sur IvoireImmobilier soit frauduleuse (prix trop bas / propriétaire injoignable / photos douteuses). Pouvez-vous l'examiner ?",
     body: (
       <>
         <p>Soyez vigilant face à ces signaux :</p>
@@ -88,6 +99,9 @@ const sections = [
     id: "documents",
     icon: FileCheck2,
     title: "Quels documents demander avant de signer ?",
+    cta: "Faire vérifier mes documents",
+    waMessage:
+      "Bonjour, je m'apprête à signer pour un bien (terrain / location) en Côte d'Ivoire et je voudrais que vos experts vérifient les documents (ACD, titre foncier, contrat de bail) avant la signature.",
     body: (
       <>
         <p className="font-semibold text-foreground">Pour un terrain :</p>
@@ -113,6 +127,9 @@ const sections = [
     id: "signalement",
     icon: PhoneCall,
     title: "Que faire si je suspecte une arnaque ?",
+    cta: "Signaler une arnaque maintenant",
+    waMessage:
+      "Bonjour, je souhaite signaler une arnaque ou une tentative d'arnaque liée à une annonce IvoireImmobilier. Voici les éléments dont je dispose : ",
     body: (
       <>
         <ol className="ml-5 list-decimal space-y-1.5">
@@ -139,6 +156,9 @@ const sections = [
     ),
   },
 ];
+
+const buildWaHref = (msg: string) =>
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
 export default function VerificationProcess() {
   return (
@@ -211,6 +231,17 @@ export default function VerificationProcess() {
                 <div className="text-sm leading-relaxed text-muted-foreground">
                   {s.body}
                 </div>
+
+                {/* CTA WhatsApp contextuel */}
+                <a
+                  href={buildWaHref(s.waMessage)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  {s.cta}
+                </a>
               </section>
             ))}
 
