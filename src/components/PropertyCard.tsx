@@ -1,11 +1,27 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MapPin, Maximize, BedDouble, CheckCircle } from "lucide-react";
-import type { Property } from "@/data/mockProperties";
+import { MapPin, Maximize, BedDouble, CheckCircle, Eye, ImageOff } from "lucide-react";
 import { formatPrice } from "@/data/mockProperties";
 
-export default function PropertyCard({ property }: { property: Property }) {
+type PropertyCardData = {
+  id: string;
+  title: string;
+  property_type: string;
+  status: "À Vendre" | "À Louer" | string;
+  price: number;
+  surface?: number | null;
+  rooms?: number | null;
+  city: string;
+  commune?: string | null;
+  images: string[];
+  verified?: boolean;
+  views?: number | null;
+};
+
+export default function PropertyCard({ property }: { property: PropertyCardData }) {
   const isRent = property.status === "À Louer";
+  const cover = property.images?.[0];
+  const views = property.views ?? 0;
 
   return (
     <Link to={`/annonce/${property.id}`}>
@@ -17,13 +33,20 @@ export default function PropertyCard({ property }: { property: Property }) {
         onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "var(--shadow-lg)")}
         onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "var(--shadow-sm)")}
       >
-        <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-          <img
-            src={property.images[0]}
-            alt={property.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-secondary">
+          {cover ? (
+            <img
+              src={cover}
+              alt={property.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
+              <ImageOff className="h-8 w-8" />
+              <span className="text-xs">Aucune photo</span>
+            </div>
+          )}
 
           {/* Status badge */}
           <div
@@ -44,6 +67,14 @@ export default function PropertyCard({ property }: { property: Property }) {
             </div>
           )}
 
+          {/* Views badge */}
+          {views > 0 && (
+            <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-lg bg-card/90 px-2 py-1 text-xs font-medium text-foreground backdrop-blur">
+              <Eye className="h-3.5 w-3.5" />
+              {views}
+            </div>
+          )}
+
           {/* Price overlay */}
           <div className="absolute bottom-3 right-3 rounded-lg bg-card/90 px-3 py-1.5 backdrop-blur">
             <span className="font-data text-base font-bold text-foreground">
@@ -61,20 +92,22 @@ export default function PropertyCard({ property }: { property: Property }) {
           </h3>
           <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 shrink-0" />
-            {property.commune}, {property.city}
+            {property.commune ? `${property.commune}, ` : ""}{property.city}
           </p>
 
           <div className="mt-3 flex gap-4 border-t border-secondary pt-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Maximize className="h-3.5 w-3.5" />
-              {property.surface}m²
-            </span>
-            {property.rooms > 0 && (
+            {property.surface ? (
+              <span className="flex items-center gap-1">
+                <Maximize className="h-3.5 w-3.5" />
+                {property.surface}m²
+              </span>
+            ) : null}
+            {property.rooms && property.rooms > 0 ? (
               <span className="flex items-center gap-1">
                 <BedDouble className="h-3.5 w-3.5" />
                 {property.rooms} pces
               </span>
-            )}
+            ) : null}
             <span className="ml-auto text-xs">
               {property.property_type}
             </span>
