@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Building2, Shield, Zap, Loader2, MessageCircle, ShieldCheck, BadgeCheck } from "lucide-react";
+import { ArrowRight, Building2, Shield, Zap, Loader2, MessageCircle, ShieldCheck, BadgeCheck, Search, Phone, Handshake } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -238,6 +244,156 @@ export default function Index() {
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Comment ça marche */}
+      <section className="container py-16">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="font-display text-2xl text-foreground md:text-3xl">Comment ça marche</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Trouvez, contactez et finalisez en 3 étapes simples — tout passe par WhatsApp.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {[
+            {
+              icon: Search,
+              step: "1",
+              title: "Trouvez le bien",
+              desc: "Filtrez par ville, type et budget. Toutes les annonces affichées sont vérifiées par notre équipe.",
+            },
+            {
+              icon: Phone,
+              step: "2",
+              title: "Contactez par WhatsApp",
+              desc: "Un clic sur le bouton WhatsApp envoie votre demande au propriétaire avec les infos du bien.",
+            },
+            {
+              icon: Handshake,
+              step: "3",
+              title: "Finalisez en confiance",
+              desc: "Visite, vérification juridique, accompagnement : nos experts vous suivent jusqu'à la signature.",
+            },
+          ].map((s, i) => (
+            <motion.div
+              key={s.step}
+              custom={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeUp}
+              className="relative rounded-2xl bg-card p-6"
+              style={{ boxShadow: "var(--shadow-sm)" }}
+            >
+              <div className="absolute -top-3 left-6 rounded-full bg-accent px-3 py-1 font-data text-xs font-bold text-accent-foreground">
+                Étape {s.step}
+              </div>
+              <div className="mb-4 mt-2 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-light">
+                <s.icon className="h-5 w-5 text-primary" />
+              </div>
+              <h3 className="font-display text-lg text-foreground">{s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <a
+            href="https://wa.me/2250779535795?text=Bonjour%2C%20je%20souhaite%20%EAtre%20accompagn%C3%A9%20pour%20trouver%20un%20bien."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-semibold text-white transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
+          >
+            <MessageCircle className="h-4 w-4" />
+            Démarrer sur WhatsApp
+          </a>
+        </div>
+      </section>
+
+      {/* FAQ anti-arnaque */}
+      <section className="bg-secondary py-16">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-light px-3 py-1.5 text-xs font-medium text-primary">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Sécurité & confiance
+            </div>
+            <h2 className="font-display text-2xl text-foreground md:text-3xl">FAQ anti-arnaque</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Les questions essentielles pour acheter ou louer en toute sécurité en Côte d'Ivoire.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-8 max-w-2xl rounded-2xl bg-card p-2 md:p-4" style={{ boxShadow: "var(--shadow-sm)" }}>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="q1">
+                <AccordionTrigger className="text-left text-sm font-semibold">
+                  Comment vérifiez-vous les annonces ?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                  Notre équipe contrôle l'identité du propriétaire, demande les documents (ACD, titre foncier, contrat de bail) et vérifie la cohérence du bien. Seules les annonces validées portent le badge{" "}
+                  <span className="inline-flex items-center gap-1 font-medium text-primary">
+                    <BadgeCheck className="h-3.5 w-3.5" /> Vérifié
+                  </span>
+                  .{" "}
+                  <Link to="/annonces?status=" className="font-medium text-accent underline-offset-4 hover:underline">
+                    Voir les annonces vérifiées
+                  </Link>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="q2">
+                <AccordionTrigger className="text-left text-sm font-semibold">
+                  Dois-je payer avant de visiter un bien ?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                  Jamais. Aucun paiement (frais de dossier, caution, "réservation") ne doit être versé avant la visite physique du bien et la vérification des documents. En cas de doute, contactez-nous sur WhatsApp.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="q3">
+                <AccordionTrigger className="text-left text-sm font-semibold">
+                  Comment reconnaître une annonce frauduleuse ?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                  Méfiez-vous d'un prix anormalement bas, d'un propriétaire injoignable, d'une absence de photos réelles ou d'une demande de paiement Mobile Money à un inconnu. Toute annonce sans badge "Vérifié" doit être abordée avec prudence.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="q4">
+                <AccordionTrigger className="text-left text-sm font-semibold">
+                  Quels documents demander avant de signer ?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                  Pour un terrain : ACD ou attestation villageoise + plan. Pour une location : pièce d'identité du bailleur, titre de propriété et contrat écrit. Notre service d'accompagnement peut vérifier ces documents pour vous.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="q5">
+                <AccordionTrigger className="text-left text-sm font-semibold">
+                  Que faire si je suspecte une arnaque ?
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                  Cessez tout paiement et contactez-nous immédiatement sur WhatsApp au +225 07 79 53 57 95. Nous retirons les annonces signalées et accompagnons les victimes dans leurs démarches.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <a
+              href="https://wa.me/2250779535795?text=Bonjour%2C%20j%27ai%20une%20question%20sur%20la%20s%C3%A9curit%C3%A9%20d%27une%20annonce."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-card px-5 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-emerald-light"
+              style={{ boxShadow: "var(--shadow-sm)" }}
+            >
+              <MessageCircle className="h-4 w-4" />
+              Poser une question à un expert
+            </a>
           </div>
         </div>
       </section>
