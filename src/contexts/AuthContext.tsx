@@ -10,28 +10,13 @@ interface Profile {
   phone: string | null;
   avatar_url: string | null;
   user_type: "client" | "agent";
-  plan: "free" | "pro" | "agency";
-  plan_expires_at: string | null;
-}
-
-interface Subscription {
-  id: string;
-  plan: "free" | "pro" | "agency";
-  billing_cycle: "monthly" | "yearly";
-  status: "trialing" | "active" | "past_due" | "cancelled" | "expired";
-  current_period_end: string;
-  cancel_at_period_end: boolean;
-  featured_used_this_month: number;
 }
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
-  subscription: Subscription | null;
   loading: boolean;
-  isPro: boolean;
-  isAgency: boolean;
   signUp: (email: string, password: string, metadata?: Record<string, string>) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -44,16 +29,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const [{ data: profileData }, { data: subData }] = await Promise.all([
-      supabase.from("profiles").select("*").eq("user_id", userId).single(),
-      supabase.from("subscriptions").select("*").eq("user_id", userId).single(),
-    ]);
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
     setProfile(profileData as Profile | null);
-    setSubscription(subData as Subscription | null);
   };
 
   useEffect(() => {
