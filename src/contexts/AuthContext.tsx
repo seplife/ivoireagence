@@ -49,7 +49,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setTimeout(() => fetchProfile(session.user.id), 0);
         } else {
           setProfile(null);
-          setSubscription(null);
         }
         setLoading(false);
       }
@@ -84,20 +83,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     setProfile(null);
-    setSubscription(null);
   };
 
   const refreshProfile = async () => {
     if (user) await fetchProfile(user.id);
   };
 
-  const isPro = profile?.plan === "pro" || profile?.plan === "agency";
-  const isAgency = profile?.plan === "agency";
-
   return (
     <AuthContext.Provider value={{
-      user, session, profile, subscription, loading,
-      isPro, isAgency,
+      user, session, profile, loading,
       signUp, signIn, signOut, refreshProfile,
     }}>
       {children}
