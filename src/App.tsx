@@ -17,6 +17,7 @@ import PricingPage from "@/pages/PricingPage";
 import MesFactures from "@/pages/MesFactures";
 import SubscriptionConfirm from "@/pages/SubscriptionConfirm";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import VerificationProcess from "./pages/VerificationProcess";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/verification" element={<VerificationProcess />} />
             <Route path="/annonces" element={<Listings />} />
             <Route path="/annonce/:id" element={<PropertyDetail />} />
             <Route path="/publier" element={<PublishListing />} />
