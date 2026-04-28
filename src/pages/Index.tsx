@@ -339,8 +339,8 @@ export default function Index() {
                     <BadgeCheck className="h-3.5 w-3.5" /> Vérifié
                   </span>
                   .{" "}
-                  <Link to="/annonces?status=" className="font-medium text-accent underline-offset-4 hover:underline">
-                    Voir les annonces vérifiées
+                  <Link to="/verification#verification" className="font-medium text-accent underline-offset-4 hover:underline">
+                    Voir le détail du processus →
                   </Link>
                 </AccordionContent>
               </AccordionItem>
@@ -350,7 +350,10 @@ export default function Index() {
                   Dois-je payer avant de visiter un bien ?
                 </AccordionTrigger>
                 <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                  Jamais. Aucun paiement (frais de dossier, caution, "réservation") ne doit être versé avant la visite physique du bien et la vérification des documents. En cas de doute, contactez-nous sur WhatsApp.
+                  Jamais. Aucun paiement (frais de dossier, caution, "réservation") ne doit être versé avant la visite physique du bien et la vérification des documents. En cas de doute, contactez-nous sur WhatsApp.{" "}
+                  <Link to="/verification#paiement" className="font-medium text-accent underline-offset-4 hover:underline">
+                    En savoir plus →
+                  </Link>
                 </AccordionContent>
               </AccordionItem>
 
@@ -359,7 +362,10 @@ export default function Index() {
                   Comment reconnaître une annonce frauduleuse ?
                 </AccordionTrigger>
                 <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                  Méfiez-vous d'un prix anormalement bas, d'un propriétaire injoignable, d'une absence de photos réelles ou d'une demande de paiement Mobile Money à un inconnu. Toute annonce sans badge "Vérifié" doit être abordée avec prudence.
+                  Méfiez-vous d'un prix anormalement bas, d'un propriétaire injoignable, d'une absence de photos réelles ou d'une demande de paiement Mobile Money à un inconnu. Toute annonce sans badge "Vérifié" doit être abordée avec prudence.{" "}
+                  <Link to="/verification#fraude" className="font-medium text-accent underline-offset-4 hover:underline">
+                    Voir tous les signaux →
+                  </Link>
                 </AccordionContent>
               </AccordionItem>
 
@@ -368,7 +374,10 @@ export default function Index() {
                   Quels documents demander avant de signer ?
                 </AccordionTrigger>
                 <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                  Pour un terrain : ACD ou attestation villageoise + plan. Pour une location : pièce d'identité du bailleur, titre de propriété et contrat écrit. Notre service d'accompagnement peut vérifier ces documents pour vous.
+                  Pour un terrain : ACD ou attestation villageoise + plan. Pour une location : pièce d'identité du bailleur, titre de propriété et contrat écrit. Notre service d'accompagnement peut vérifier ces documents pour vous.{" "}
+                  <Link to="/verification#documents" className="font-medium text-accent underline-offset-4 hover:underline">
+                    Liste complète des documents →
+                  </Link>
                 </AccordionContent>
               </AccordionItem>
 
@@ -377,7 +386,10 @@ export default function Index() {
                   Que faire si je suspecte une arnaque ?
                 </AccordionTrigger>
                 <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                  Cessez tout paiement et contactez-nous immédiatement sur WhatsApp au +225 07 79 53 57 95. Nous retirons les annonces signalées et accompagnons les victimes dans leurs démarches.
+                  Cessez tout paiement et contactez-nous immédiatement sur WhatsApp au +225 07 79 53 57 95. Nous retirons les annonces signalées et accompagnons les victimes dans leurs démarches.{" "}
+                  <Link to="/verification#signalement" className="font-medium text-accent underline-offset-4 hover:underline">
+                    Procédure de signalement →
+                  </Link>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

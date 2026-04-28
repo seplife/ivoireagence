@@ -17,6 +17,8 @@ import PricingPage from "@/pages/PricingPage";
 import MesFactures from "@/pages/MesFactures";
 import SubscriptionConfirm from "@/pages/SubscriptionConfirm";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import VerificationProcess from "./pages/VerificationProcess";
+import ScrollToHash from "@/components/ScrollToHash";
 
 const queryClient = new QueryClient();
 
@@ -27,8 +29,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <ScrollToHash />
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/verification" element={<VerificationProcess />} />
             <Route path="/annonces" element={<Listings />} />
             <Route path="/annonce/:id" element={<PropertyDetail />} />
             <Route path="/publier" element={<PublishListing />} />
