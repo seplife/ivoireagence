@@ -57,8 +57,8 @@ export default function SearchBar({ variant = "hero" }: SearchBarProps) {
           className="h-12 flex-1 rounded-xl bg-secondary px-4 text-sm text-foreground outline-none transition-all focus:ring-2 focus:ring-accent/20"
         >
           <option value="">Achat & Location</option>
-          <option value="À Vendre">À Vendre</option>
-          <option value="À Louer">À Louer</option>
+          <option value="a_vendre">À Vendre</option>
+          <option value="a_louer">À Louer</option>
         </select>
 
         <button

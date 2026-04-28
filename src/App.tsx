@@ -16,6 +16,7 @@ import PaymentPage from "@/pages/PaymentPage";
 import PricingPage from "@/pages/PricingPage";
 import MesFactures from "@/pages/MesFactures";
 import SubscriptionConfirm from "@/pages/SubscriptionConfirm";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/mes-factures" element={<MesFactures />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <WhatsAppFloat />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
