@@ -100,6 +100,7 @@ export default function SearchBar({ variant = "hero" }: SearchBarProps) {
       {/* CTA WhatsApp pré-rempli avec les filtres */}
       <a
         href={buildWhatsappHref()}
+        onClick={persistSearch}
         target="_blank"
         rel="noopener noreferrer"
         className="mt-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366]/10 px-4 text-sm font-medium text-[#128C4F] transition-colors hover:bg-[#25D366]/20"
