@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import {
   ShieldCheck,
   BadgeCheck,
@@ -9,11 +10,22 @@ import {
   PhoneCall,
   ArrowRight,
   MessageCircle,
+  Copy,
+  Check,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { toast } from "@/hooks/use-toast";
 
 const WHATSAPP_NUMBER = "2250779535795";
+
+const SECTION_LABELS: Record<string, string> = {
+  verification: "Vérification d'annonce",
+  paiement: "Paiement & visite",
+  fraude: "Annonce suspecte",
+  documents: "Documents juridiques",
+  signalement: "Signalement d'arnaque",
+};
 
 const sections = [
   {
