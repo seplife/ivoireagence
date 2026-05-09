@@ -15,11 +15,21 @@ export default function SearchBar({ variant = "hero" }: SearchBarProps) {
   const [type, setType] = useState("");
   const [status, setStatus] = useState("");
 
+  const persistSearch = () => {
+    try {
+      sessionStorage.setItem(
+        "ii:lastSearch",
+        JSON.stringify({ city, type, status }),
+      );
+    } catch {}
+  };
+
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (city) params.set("city", city);
     if (type) params.set("type", type);
     if (status) params.set("status", status);
+    persistSearch();
     navigate(`/annonces?${params.toString()}`);
   };
 
