@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import {
   ShieldCheck,
   BadgeCheck,
@@ -9,11 +10,22 @@ import {
   PhoneCall,
   ArrowRight,
   MessageCircle,
+  Copy,
+  Check,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { toast } from "@/hooks/use-toast";
 
 const WHATSAPP_NUMBER = "2250779535795";
+
+const SECTION_LABELS: Record<string, string> = {
+  verification: "Vérification d'annonce",
+  paiement: "Paiement & visite",
+  fraude: "Annonce suspecte",
+  documents: "Documents juridiques",
+  signalement: "Signalement d'arnaque",
+};
 
 const sections = [
   {
@@ -160,7 +172,84 @@ const sections = [
 const buildWaHref = (msg: string) =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
+type SearchCtx = { city?: string; type?: string; status?: string };
+
+const buildContextSuffix = (sectionId: string, search: SearchCtx) => {
+  const parts: string[] = [];
+  parts.push(`\n\n— Section : ${SECTION_LABELS[sectionId] ?? sectionId}`);
+  const statusLabel =
+    search.status === "a_louer"
+      ? "à louer"
+      : search.status === "a_vendre"
+      ? "à vendre"
+      : "";
+  const searchBits: string[] = [];
+  if (search.type) searchBits.push(search.type);
+  if (statusLabel) searchBits.push(statusLabel);
+  if (search.city) searchBits.push(`à ${search.city}`);
+  if (searchBits.length)
+    parts.push(`\n— Ma recherche actuelle : ${searchBits.join(" ")}`);
+  return parts.join("");
+};
+
+function SectionCTA({
+  sectionId,
+  baseMessage,
+  cta,
+  search,
+}: {
+  sectionId: string;
+  baseMessage: string;
+  cta: string;
+  search: SearchCtx;
+}) {
+  const [copied, setCopied] = useState(false);
+  const fullMessage = baseMessage + buildContextSuffix(sectionId, search);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(fullMessage);
+      setCopied(true);
+      toast({ title: "Message copié", description: "Vous pouvez le coller dans WhatsApp." });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Impossible de copier", description: "Sélectionnez le texte manuellement.", variant: "destructive" });
+    }
+  };
+
+  return (
+    <div className="mt-5 flex flex-wrap items-center gap-2">
+      <a
+        href={buildWaHref(fullMessage)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
+      >
+        <MessageCircle className="h-4 w-4" />
+        {cta}
+      </a>
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+      >
+        {copied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+        {copied ? "Copié" : "Copier le message WhatsApp"}
+      </button>
+    </div>
+  );
+}
+
 export default function VerificationProcess() {
+  const [search, setSearch] = useState<SearchCtx>({});
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("ii:lastSearch");
+      if (raw) setSearch(JSON.parse(raw));
+    } catch {}
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -232,16 +321,13 @@ export default function VerificationProcess() {
                   {s.body}
                 </div>
 
-                {/* CTA WhatsApp contextuel */}
-                <a
-                  href={buildWaHref(s.waMessage)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:brightness-110 active:scale-[0.96]"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  {s.cta}
-                </a>
+                {/* CTA WhatsApp contextuel + copie */}
+                <SectionCTA
+                  sectionId={s.id}
+                  baseMessage={s.waMessage}
+                  cta={s.cta}
+                  search={search}
+                />
               </section>
             ))}
 
