@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, Search, PlusCircle, User, Menu, X, MessageCircle, Receipt, Star } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Home, Search, PlusCircle, User, Menu, X, MessageCircle, Receipt, Star, LogOut } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
