@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, Search, PlusCircle, User, Menu, X, MessageCircle, Receipt, Star } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Home, Search, PlusCircle, User, Menu, X, MessageCircle, Receipt, Star, LogOut } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,8 +13,15 @@ const navLinks = [
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    setMobileOpen(false);
+    navigate("/");
+  };
   const isPro = false;
 
   const displayName = profile?.first_name || user?.email?.split("@")[0] || "";
@@ -98,9 +105,10 @@ export default function Navbar() {
                     </Link>
                   )}
                   <div className="mx-3 my-1 border-t border-border" />
-                  <Link to="/deconnexion" className="flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-secondary">
+                  <button onClick={handleLogout} className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-destructive hover:bg-secondary">
+                    <LogOut className="h-4 w-4" />
                     Déconnexion
-                  </Link>
+                  </button>
                 </div>
               </div>
             </>
@@ -169,6 +177,10 @@ export default function Navbar() {
                       Passer à Pro
                     </Link>
                   )}
+                  <button onClick={handleLogout} className="flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-destructive hover:bg-secondary">
+                    <LogOut className="h-5 w-5" />
+                    Déconnexion
+                  </button>
                 </>
               ) : (
                 <Link to="/connexion" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary">
