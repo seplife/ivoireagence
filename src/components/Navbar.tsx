@@ -13,8 +13,15 @@ const navLinks = [
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    setMobileOpen(false);
+    navigate("/");
+  };
   const isPro = false;
 
   const displayName = profile?.first_name || user?.email?.split("@")[0] || "";
