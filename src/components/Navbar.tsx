@@ -177,6 +177,10 @@ export default function Navbar() {
                       Passer à Pro
                     </Link>
                   )}
+                  <button onClick={handleLogout} className="flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-destructive hover:bg-secondary">
+                    <LogOut className="h-5 w-5" />
+                    Déconnexion
+                  </button>
                 </>
               ) : (
                 <Link to="/connexion" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary">
