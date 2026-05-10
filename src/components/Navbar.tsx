@@ -105,9 +105,10 @@ export default function Navbar() {
                     </Link>
                   )}
                   <div className="mx-3 my-1 border-t border-border" />
-                  <Link to="/deconnexion" className="flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-secondary">
+                  <button onClick={handleLogout} className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-destructive hover:bg-secondary">
+                    <LogOut className="h-4 w-4" />
                     Déconnexion
-                  </Link>
+                  </button>
                 </div>
               </div>
             </>
