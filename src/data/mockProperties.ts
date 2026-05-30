@@ -266,7 +266,7 @@ export const mockProperties: Property[] = [
     commune: "Non précisée",
     owner_name: "Non précisé",
     owner_phone: "Non précisé",
-    images: ["/images/img01.jpg", "/images/img5.jpg"],
+    images: ["/images/img01.jpg", "/images/img2.jpg"],
     verified: false,
     created_at: "2026-05-30",
     views: 0,
