@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { User, Mail, Phone, Loader2, LogOut, Camera } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { User, Mail, Phone, Loader2, LogOut, Camera, Trash2, Pencil, Home, Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { formatPrice } from "@/data/mockProperties";
 
 export default function Profile() {
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
