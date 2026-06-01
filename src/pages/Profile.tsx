@@ -17,10 +17,44 @@ export default function Profile() {
   const [phone, setPhone] = useState("");
   const [userType, setUserType] = useState<"client" | "agent">("client");
   const [saving, setSaving] = useState(false);
+  const [myProperties, setMyProperties] = useState<any[]>([]);
+  const [loadingProps, setLoadingProps] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate("/connexion");
   }, [loading, user, navigate]);
+
+  const loadProperties = async () => {
+    if (!user) return;
+    setLoadingProps(true);
+    const { data } = await supabase
+      .from("properties")
+      .select("id, title, price, status, city, commune, property_images(image_url)")
+      .eq("owner_id", user.id)
+      .order("created_at", { ascending: false });
+    setMyProperties(data || []);
+    setLoadingProps(false);
+  };
+
+  useEffect(() => {
+    if (user) loadProperties();
+  }, [user]);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Supprimer définitivement cette annonce ? Elle ne sera plus visible.")) return;
+    setDeletingId(id);
+    // Remove images then property
+    await supabase.from("property_images").delete().eq("property_id", id);
+    const { error } = await supabase.from("properties").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Annonce supprimée" });
+      setMyProperties((prev) => prev.filter((p) => p.id !== id));
+    }
+    setDeletingId(null);
+  };
 
   useEffect(() => {
     if (profile) {
