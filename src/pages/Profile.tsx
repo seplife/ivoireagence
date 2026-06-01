@@ -162,8 +162,77 @@ export default function Profile() {
             Se déconnecter
           </button>
         </div>
+
+        {/* Mes annonces */}
+        <div className="mx-auto mt-8 max-w-3xl rounded-2xl bg-card p-6" style={{ boxShadow: "var(--shadow-md)" }}>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="font-display text-xl text-foreground">Mes annonces</h2>
+              <p className="text-sm text-muted-foreground">Modifiez ou supprimez vos biens vendus ou loués.</p>
+            </div>
+            <Link
+              to="/publier"
+              className="flex shrink-0 items-center gap-1.5 rounded-xl bg-accent px-3 py-2 text-xs font-semibold text-accent-foreground hover:brightness-110"
+            >
+              <Plus className="h-3.5 w-3.5" /> Publier
+            </Link>
+          </div>
+
+          <div className="mt-5">
+            {loadingProps ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : myProperties.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border py-10 text-center">
+                <Home className="mx-auto h-8 w-8 text-muted-foreground" />
+                <p className="mt-2 text-sm text-muted-foreground">Vous n'avez encore publié aucune annonce.</p>
+              </div>
+            ) : (
+              <ul className="divide-y divide-border">
+                {myProperties.map((p) => {
+                  const img = p.property_images?.[0]?.image_url || "/placeholder.svg";
+                  const isRent = p.status === "a_louer";
+                  return (
+                    <li key={p.id} className="flex items-center gap-3 py-3">
+                      <Link to={`/annonce/${p.id}`} className="shrink-0">
+                        <img src={img} alt={p.title} className="h-14 w-14 rounded-xl object-cover" />
+                      </Link>
+                      <div className="min-w-0 flex-1">
+                        <Link to={`/annonce/${p.id}`} className="block truncate text-sm font-medium text-foreground hover:underline">
+                          {p.title}
+                        </Link>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {[p.commune, p.city].filter(Boolean).join(", ")} · {isRent ? "À Louer" : "À Vendre"} · {formatPrice(p.price)} FCFA{isRent ? "/mois" : ""}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        <Link
+                          to={`/annonce/${p.id}`}
+                          className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                          aria-label="Voir l'annonce"
+                          title="Voir"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          disabled={deletingId === p.id}
+                          className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground disabled:opacity-50"
+                          aria-label="Supprimer l'annonce"
+                          title="Supprimer (bien vendu ou loué)"
+                        >
+                          {deletingId === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
       </div>
-      <Footer />
     </div>
   );
 }
